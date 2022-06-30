@@ -14,7 +14,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 import pickle
 
 # Traitement des données
-pcr = pd.read_excel("pcr.xlsx",engine='openpyxl')
+pcr = pd.read_csv("data_pcr_complet_csv.csv")
 pcr = pcr[0:53]
 X = pcr[["PCR Reçu"]]
 y = pcr["PCR Complété"]

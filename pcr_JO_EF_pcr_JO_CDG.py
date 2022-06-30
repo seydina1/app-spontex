@@ -9,7 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Chargement des données et traitement des données
-data_pcr = pd.read_excel("data_pcr.xlsx")
+data_pcr = pd.read_csv("data_pcr_complet_csv.csv")
 data_pcr = data_pcr[0:53]
 print(data_pcr.describe())
 X = data_pcr["PCR Complété"]

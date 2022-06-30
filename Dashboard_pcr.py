@@ -17,7 +17,7 @@ from PIL import Image
 import pickle
 
 # Chargement de mes données
-df = pd.read_excel("data_pcr_complet.xlsx",engine='openpyxl')
+df = pd.read_csv("data_pcr_complet_csv.csv")
 df = df[0:53]
 
 # Titre de mon application 
