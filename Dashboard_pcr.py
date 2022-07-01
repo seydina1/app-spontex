@@ -24,8 +24,8 @@ df = df[0:53]
 st.title("Analyse du PCR de janvier 2018 au mai 2022 ")
 # Menu bar horizontal
 menu = option_menu(menu_title = "Menu",
-                   options = ["Données PCR", "Graphes PCR","Matrice de corrélation","Machine Learning"],
-                   icons = ["clipboard-data","graph-down","file-spreadsheet","laptop"],
+                   options = ["Données PCR", "Graphes PCR","Matrice de corrélation","Machine Learning","Importation de données CSV"],
+                   icons = ["clipboard-data","graph-down","file-spreadsheet","laptop","upload"],
                    menu_icon = "cast", default_index = 0, orientation = "horizontal")
 if menu == "Données PCR":
     # Dataframe
@@ -89,6 +89,8 @@ if menu == "Graphes PCR":
     plt.xticks(rotation=70)
     plt.legend()
     st.pyplot(fig6)
+
+        
 if menu == "Machine Learning":
     # Machine learning
     pickle_in = open('model_linear_pcr_complete_recu.pkl', 'rb')
@@ -107,49 +109,55 @@ if menu == "Machine Learning":
             resultat = prediction()
         st.success("Le nombre de PCR qui sera complété est {}".format(resultat))
         
-        
     if __name__=='__main__':
-        main()    
+        main()  
+        
+if menu == "Importation de données CSV":
+    # Importation d'un fichier CSV
+    uploaded_files = st.file_uploader("Choisir un fichier CSV", accept_multiple_files=True)
+    for uploaded_file in uploaded_files:
+        dataFrame = pd.read_csv(uploaded_file)
+        st.write(dataFrame)
+        # Sidebar
+        st.sidebar.title("Analyse du PCR de janvier 2018 au mai 2022")
+        graph_type = st.sidebar.selectbox("Type de graphes" , ["Line chart","Bar chart"])
+        # Personalisation Graphes
+        st.title("Visualisation Personnalisée")
+        fig  = go.Figure()
+        select_axe_abscisse = st.sidebar.selectbox("Axe des abscisses", list(dataFrame.columns.values))
+        select_axe_ordonnee = st.sidebar.selectbox("Axe des ordonnées", list(dataFrame.columns.values))
+        if graph_type == 'Line chart':
+            if select_axe_abscisse == 'PCR Reçu' and select_axe_ordonnee == 'PCR Complété':
+                fig.add_trace(go.Scatter(x = dataFrame["PCR Reçu"], y = dataFrame["PCR Complété"], mode="markers"))
+            if select_axe_abscisse == 'DO Reçu' and select_axe_ordonnee == 'DO Traité':
+                fig.add_trace(go.Scatter(x = dataFrame["DO Reçu"], y = dataFrame["DO Traité"], mode="markers"))
+        elif graph_type == 'Bar chart':
+            if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'Temps de réponse PCR en JO':
+                fig.add_trace(go.Bar(x = dataFrame["Année"], y = dataFrame["Temps de réponse PCR en JO"]))
+            if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'Temps de réponse PCR en JO CDG':
+                fig.add_trace(go.Bar(x = dataFrame["Année"], y = dataFrame["Temps de réponse PCR en JO CDG"]))
+            if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'PCR Reçu':
+                fig.add_trace(go.Bar(x = dataFrame["Année"], y = dataFrame["PCR Reçu"]))
+            if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'PCR Complété':
+                fig.add_trace(go.Bar(x = dataFrame["Année"], y = dataFrame["PCR Complété"]))
+            if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'PCR Traité envoyé pour CDG':
+                fig.add_trace(go.Bar(x = dataFrame["Année"], y = dataFrame["PCR Traité envoyé pour CDG"]))
+            if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'PCR Annulé':
+                fig.add_trace(go.Bar(x = dataFrame["Année"], y = dataFrame["PCR Annulé"]))
+            if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'PCR Réponse faite au demandeur':
+                fig.add_trace(go.Bar(x = dataFrame["Année"], y = dataFrame["PCR Réponse faite au demandeur"]))
+            if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'DO Reçu':
+                fig.add_trace(go.Bar(x = dataFrame["Année"], y = dataFrame["DO Reçu"]))
+            if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'DO Traité':
+                fig.add_trace(go.Bar(x = dataFrame["Année"], y = dataFrame["DO Traité"]))
+        st.plotly_chart(fig)        
     
  
     
     
-# Sidebar
-st.sidebar.title("Analyse du PCR de janvier 2018 au mai 2022")
-graph_type = st.sidebar.selectbox("Type de graphes" , ["Line chart","Bar chart"])
-select_axe_abscisse = st.sidebar.selectbox("Axe des abscisses", list(df.columns.values))
-select_axe_ordonnee = st.sidebar.selectbox("Axe des ordonnées", list(df.columns.values))
 
 
-# Personalisation Graphes
-st.title("Visualisation Personnalisée")
-fig  = go.Figure()
 
-if graph_type == 'Line chart':
-    if select_axe_abscisse == 'PCR Reçu' and select_axe_ordonnee == 'PCR Complété':
-        fig.add_trace(go.Scatter(x = df["PCR Reçu"], y = df["PCR Complété"], mode="markers"))
-    if select_axe_abscisse == 'DO Reçu' and select_axe_ordonnee == 'DO Traité':
-        fig.add_trace(go.Scatter(x = df["DO Reçu"], y = df["DO Traité"], mode="markers"))
-elif graph_type == 'Bar chart':
-    if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'Temps de réponse PCR en JO':
-        fig.add_trace(go.Bar(x = df["Année"], y = df["Temps de réponse PCR en JO"]))
-    if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'Temps de réponse PCR en JO CDG':
-        fig.add_trace(go.Bar(x = df["Année"], y = df["Temps de réponse PCR en JO CDG"]))
-    if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'PCR Reçu':
-        fig.add_trace(go.Bar(x = df["Année"], y = df["PCR Reçu"]))
-    if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'PCR Complété':
-        fig.add_trace(go.Bar(x = df["Année"], y = df["PCR Complété"]))
-    if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'PCR Traité envoyé pour CDG':
-        fig.add_trace(go.Bar(x = df["Année"], y = df["PCR Traité envoyé pour CDG"]))
-    if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'PCR Annulé':
-        fig.add_trace(go.Bar(x = df["Année"], y = df["PCR Annulé"]))
-    if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'PCR Réponse faite au demandeur':
-        fig.add_trace(go.Bar(x = df["Année"], y = df["PCR Réponse faite au demandeur"]))
-    if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'DO Reçu':
-        fig.add_trace(go.Bar(x = df["Année"], y = df["DO Reçu"]))
-    if select_axe_abscisse == 'Année' and select_axe_ordonnee == 'DO Traité':
-        fig.add_trace(go.Bar(x = df["Année"], y = df["DO Traité"]))
-st.plotly_chart(fig)
 
 
     
