@@ -118,15 +118,16 @@ if menu == "Importation de données CSV":
     for uploaded_file in uploaded_files:
         dataFrame = pd.read_csv(uploaded_file)
         st.write(dataFrame)
+        st.write(dataFrame.describe())
         # Sidebar
         st.sidebar.title("Analyse du PCR")
-        graph_type = st.sidebar.selectbox("Type de graphes" , ["Line chart","Bar chart"])
+        graph_type = st.sidebar.selectbox("Type de graphes" , ["Scatter chart","Bar chart"])
         # Personalisation Graphes
         st.title("Visualisation Personnalisée")
         fig  = go.Figure()
         select_axe_abscisse = st.sidebar.selectbox("Axe des abscisses", list(dataFrame.columns.values))
         select_axe_ordonnee = st.sidebar.selectbox("Axe des ordonnées", list(dataFrame.columns.values))
-        if graph_type == 'Line chart':
+        if graph_type == 'Scatter chart':
             if select_axe_abscisse and select_axe_ordonnee:
                 fig.add_trace(go.Scatter(x = dataFrame[select_axe_abscisse] , y =  dataFrame[select_axe_ordonnee], mode="markers"))
         elif graph_type == 'Bar chart':
